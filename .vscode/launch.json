@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-Atv1Application<atv1>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "management.user.atv1.Atv1Application",
+            "projectName": "atv1",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
