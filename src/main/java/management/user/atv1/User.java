@@ -162,18 +162,18 @@ public class User {
         return new ResponseEntity<String>("Senha alterada com sucesso", HttpStatus.OK);
     }
 
-    @PostMapping("/unlock/{username}")
+    @PutMapping("/desbloquear/{username}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> unblockUser(@PathVariable String username) {
         return username == null ? ResponseEntity.badRequest().body("ERRO!! Username é obrigatório")
                 : Optional.ofNullable(dao.findByUsername(username))
                         .map(user -> !user.isBlocked()
                                 ? ResponseEntity.badRequest().body("ERRO!! Usuário não está bloqueado")
-                                : desbloquearUsuario(user))
+                                : unlockUser(user))
                         .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário inexistente"));
     }
 
-    private ResponseEntity<String> desbloquearUsuario(UserBean user) {
+    private ResponseEntity<String> unlockUser(UserBean user) {
         user.setTotalFails(0);
         user.setBlocked(false);
         dao.save(user);

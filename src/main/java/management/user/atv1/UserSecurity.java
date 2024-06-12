@@ -30,7 +30,7 @@ public class UserSecurity {
                         .requestMatchers(HttpMethod.GET, "/user").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/user").permitAll()
                         .requestMatchers(HttpMethod.GET, "/user/blocked").permitAll()
-                        .requestMatchers("/user/unlock/**").hasRole("ADMIN"))
+                        .requestMatchers("/user/desbloquear/**").hasRole("ADMIN"))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(translator)));
 
