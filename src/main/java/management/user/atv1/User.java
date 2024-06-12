@@ -6,9 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import java.util.Optional;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/user")
@@ -157,5 +160,23 @@ public class User {
         dao.save(userExists);
 
         return new ResponseEntity<String>("Senha alterada com sucesso", HttpStatus.OK);
+    }
+
+    @PostMapping("/unlock/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> unblockUser(@PathVariable String username) {
+        return username == null ? ResponseEntity.badRequest().body("ERRO!! Username é obrigatório")
+                : Optional.ofNullable(dao.findByUsername(username))
+                        .map(user -> !user.isBlocked()
+                                ? ResponseEntity.badRequest().body("ERRO!! Usuário não está bloqueado")
+                                : desbloquearUsuario(user))
+                        .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário inexistente"));
+    }
+
+    private ResponseEntity<String> desbloquearUsuario(UserBean user) {
+        user.setTotalFails(0);
+        user.setBlocked(false);
+        dao.save(user);
+        return ResponseEntity.ok("Usuário desbloqueado!!");
     }
 }
