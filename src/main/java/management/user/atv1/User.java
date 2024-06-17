@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.Optional;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.kafka.core.KafkaTemplate;
 
 @RestController
 @RequestMapping("/user")
@@ -19,6 +20,9 @@ public class User {
 
     @Autowired
     private UserDAO dao;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     @PostMapping
     public ResponseEntity<String> createUser(@RequestBody UserBean user) throws DupedIdException {
@@ -98,6 +102,8 @@ public class User {
                 userExists.setBlocked(true);
                 System.out.println("Usuário bloqueado");
             }
+
+            kafkaTemplate.send("invalid-logins", user.getUsername());
 
             dao.save(userExists);
 

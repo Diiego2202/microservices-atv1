@@ -17,6 +17,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class UserSecurity {
+    public UserSecurity() {
+        super();
+    }
+
     @Autowired
     private JwtTranslator translator;
 
